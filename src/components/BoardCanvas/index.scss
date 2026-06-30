@@ -1,0 +1,20 @@
+.board-canvas {
+  display: block;
+  margin: 0 auto;
+}
+
+.share-canvas-host {
+  position: fixed;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -10;
+}
+
+.share-canvas {
+  position: absolute;
+  left: -9999rpx;
+  top: 0;
+  display: block;
+}

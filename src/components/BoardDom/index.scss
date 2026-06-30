@@ -1,0 +1,42 @@
+.board-dom {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.board-dom__layer {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.board-dom__text {
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.board-dom__layer--tile {
+  animation: board-hex-reveal 320ms cubic-bezier(.22, 1, .36, 1) var(--board-reveal-delay) both;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.board-dom__layer--detail {
+  animation: board-detail-reveal 180ms ease-out var(--board-reveal-delay) both;
+  will-change: opacity;
+}
+
+@keyframes board-hex-reveal {
+  from {
+    opacity: 0;
+    transform: scale(.08) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes board-detail-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
