@@ -1,1 +1,10 @@
-.metric-summary { display: grid; gap: 10rpx; margin-top: 20rpx; padding: 20rpx 24rpx; border-radius: 20rpx; background: #fffdf8; color: #52616b; }
+.metric-summary {
+  display: grid;
+  gap: 10rpx;
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  border: 2rpx solid var(--theme-border);
+  border-radius: 18rpx;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+}

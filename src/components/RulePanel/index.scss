@@ -4,14 +4,16 @@
   z-index: 9999;
   display: flex;
   align-items: flex-end;
-  background: rgba(41, 51, 58, .32);
+  background: var(--theme-overlay);
 }
 
 .rule-panel {
   width: 100%;
   max-height: 82vh;
-  border-radius: 32rpx 32rpx 0 0;
-  background: #fffdf8;
+  border-top: 2rpx solid var(--theme-border);
+  border-radius: 28rpx 28rpx 0 0;
+  background: var(--theme-surface);
+  color: var(--theme-text);
   overflow: auto;
   padding-bottom: calc(18rpx + constant(safe-area-inset-bottom));
   padding-bottom: calc(18rpx + env(safe-area-inset-bottom));
@@ -25,27 +27,41 @@
   align-items: center;
   justify-content: space-between;
   padding: 22rpx 24rpx;
-  background: #fffdf8;
-  color: #29333a;
+  background: var(--theme-surface);
+  color: var(--theme-text);
   font-weight: 700;
-  border-bottom: 1rpx solid #eee7da;
+  border-bottom: 2rpx solid var(--theme-border);
 }
 
 .rule-panel__close {
   width: 56rpx;
   height: 56rpx;
   padding: 0;
-  border-radius: 999rpx;
-  background: #fff8ea;
-  color: #d98b16;
+  border: 2rpx solid var(--theme-border);
+  border-radius: 14rpx;
+  background: var(--theme-page);
+  color: var(--theme-text);
   font-size: 30rpx;
-  line-height: 56rpx;
+  line-height: 52rpx;
   margin: 0;
   text-align: center;
   box-sizing: border-box;
 }
 
 .rule-panel__body { padding: 12rpx 24rpx 36rpx; }
-.rule-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; min-height: 72rpx; border-bottom: 1rpx solid #eee7da; }
-.rule-row--limit button { width: 56rpx; min-width: 56rpx; padding: 0; }
-.rule-panel__note { display: block; margin-top: 18rpx; color: #73808a; font-size: 24rpx; line-height: 1.5; }
+.rule-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; min-height: 72rpx; border-bottom: 2rpx solid var(--theme-border); color: var(--theme-text); }
+.rule-row--limit button { width: 56rpx; min-width: 56rpx; padding: 0; border: 2rpx solid var(--theme-border); border-radius: 12rpx; background: var(--theme-page); color: var(--theme-text); }
+.rule-row--limit button::after { border: 0; }
+.rule-row--limit button[disabled] {
+  background: var(--theme-page);
+  color: var(--theme-text);
+  border: 2rpx solid var(--theme-border);
+  opacity: .48;
+}
+.rule-row--limit button:not([disabled]):active,
+.rule-row--limit button:not([disabled]).button-hover {
+  background: var(--theme-page);
+  color: var(--theme-text);
+  border: 2rpx solid var(--theme-border);
+}
+.rule-panel__note { display: block; margin-top: 18rpx; color: var(--theme-muted); font-size: 24rpx; line-height: 1.5; }

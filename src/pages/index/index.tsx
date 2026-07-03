@@ -141,6 +141,11 @@ export default function IndexPage() {
     <View className="page" style={themeCssVariables(activeTheme)}>
       <View className="top-controls">
         <Picker
+          className={
+            busy
+              ? "player-picker-control player-picker-control--disabled"
+              : "player-picker-control"
+          }
           mode="selector"
           range={PLAYER_OPTIONS.map((option) => option.label)}
           value={playerOptionIndex}
