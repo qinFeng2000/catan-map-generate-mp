@@ -13,6 +13,7 @@ import {
 } from "@/renderer/board-scene";
 import { createShareApi, shareImage } from "@/sharing/share-image";
 import { rpx, toDisplayCanvasSize } from "@/shared/units";
+import { activeTheme, themeCssVariables } from "@/theme";
 import {
   getBoardVersionForPlayerOption,
   getPlayerOptionIndex,
@@ -55,6 +56,7 @@ export default function IndexPage() {
   const commands = visibleBoard
     ? createBoardScene(visibleBoard, displayPreset, {
         ...pageRenderSize,
+        theme: activeTheme,
         includeSummary: false,
         includeLegend: true,
       })
@@ -69,6 +71,7 @@ export default function IndexPage() {
       visibleBoard
         ? createBoardScene(visibleBoard, displayPreset, {
             ...shareRenderSize,
+            theme: activeTheme,
             includeSummary: true,
             ruleLines: enabledRuleLines(
               state.appliedRules,
@@ -135,7 +138,7 @@ export default function IndexPage() {
   );
 
   return (
-    <View className="page">
+    <View className="page" style={themeCssVariables(activeTheme)}>
       <View className="top-controls">
         <Picker
           mode="selector"
@@ -207,6 +210,7 @@ export default function IndexPage() {
         </View>
       )}
       <RulePanel
+        theme={activeTheme}
         version={state.version}
         rules={state.draftRules}
         disabled={busy}

@@ -5,6 +5,43 @@ import { describe, expect, it } from 'vitest'
 const GUARDED_OFFSCREEN_CANVAS_PATTERN =
   /\{visibleBoard\s*&&\s*!rulesOpen\s*&&\s*\(\s*<BoardCanvas\b(?:(?!\/>)[\s\S])*?\boffscreen\b(?:(?!\/>)[\s\S])*?\/>/
 
+function extractFunctionCalls(source: string, functionName: string): string[] {
+  const calls: string[] = []
+  const callPattern = new RegExp(`\\b${functionName}\\s*\\(`, 'g')
+
+  for (const match of source.matchAll(callPattern)) {
+    const start = match.index
+    let depth = 0
+    let quote: "'" | '"' | '`' | null = null
+    let escaped = false
+
+    for (let index = source.indexOf('(', start); index < source.length; index += 1) {
+      const character = source[index]
+
+      if (quote) {
+        if (escaped) escaped = false
+        else if (character === '\\') escaped = true
+        else if (character === quote) quote = null
+        continue
+      }
+
+      if (character === "'" || character === '"' || character === '`') {
+        quote = character
+      } else if (character === '(') {
+        depth += 1
+      } else if (character === ')') {
+        depth -= 1
+        if (depth === 0) {
+          calls.push(source.slice(start, index + 1))
+          break
+        }
+      }
+    }
+  }
+
+  return calls
+}
+
 describe('index page canvas structure', () => {
   it('does not expose unfinished game mode tabs', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
@@ -62,5 +99,22 @@ describe('index page canvas structure', () => {
     expect(pageSource).not.toMatch(/canvasId\s*=\s*["']board-canvas["']/)
     expect(pageSource).not.toMatch(/className\s*=\s*["']map-loading["']/)
     expect(styleSource).not.toContain('.map-loading')
+  })
+
+  it('wires the active theme through the page, board scenes, and rule panel', () => {
+    const source = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
+    const boardSceneCalls = extractFunctionCalls(source, 'createBoardScene')
+
+    expect(source).toMatch(
+      /import\s*\{[^}]*\bactiveTheme\b[^}]*\bthemeCssVariables\b[^}]*\}\s*from\s*["']@\/theme["']|import\s*\{[^}]*\bthemeCssVariables\b[^}]*\bactiveTheme\b[^}]*\}\s*from\s*["']@\/theme["']/,
+    )
+    expect(source).toMatch(
+      /<View\b(?=[^>]*\bclassName\s*=\s*["']page["'])(?=[^>]*\bstyle\s*=\s*\{\s*themeCssVariables\(\s*activeTheme\s*\)\s*\})[^>]*>/,
+    )
+    expect(boardSceneCalls).toHaveLength(2)
+    for (const call of boardSceneCalls) {
+      expect(call).toMatch(/\btheme\s*:\s*activeTheme\b/)
+    }
+    expect(source).toMatch(/<RulePanel\b(?:(?!\/>)[\s\S])*?\btheme\s*=\s*\{\s*activeTheme\s*\}(?:(?!\/>)[\s\S])*?\/>/)
   })
 })

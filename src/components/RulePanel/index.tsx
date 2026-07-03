@@ -1,6 +1,7 @@
 import { Button, Switch, Text, View } from "@tarojs/components";
 import type { BoardVersion } from "@/domain/board";
 import type { GeneratorRules } from "@/domain/rules";
+import { activeTheme, type ThemeDefinition } from "@/theme";
 import {
   decrementIntersectionLimit,
   incrementIntersectionLimit,
@@ -19,6 +20,7 @@ const RULE_ROWS = [
 ] as const;
 
 interface RulePanelProps {
+  theme?: ThemeDefinition;
   version: BoardVersion;
   rules: GeneratorRules;
   disabled: boolean;
@@ -28,6 +30,7 @@ interface RulePanelProps {
 }
 
 export function RulePanel({
+  theme = activeTheme,
   version,
   rules,
   disabled,
@@ -53,7 +56,7 @@ export function RulePanel({
               <Switch
                 disabled={disabled}
                 checked={rules[key]}
-                color="#d98b16"
+                color={theme.ui.primary}
                 onChange={() => onChange(toggleRule(rules, key))}
               />
             </View>
@@ -62,7 +65,7 @@ export function RulePanel({
             <Switch
               disabled={disabled}
               checked={rules.intersectionResourceLimitEnabled}
-              color="#d98b16"
+              color={theme.ui.primary}
               onChange={() =>
                 onChange(toggleRule(rules, "intersectionResourceLimitEnabled"))
               }
