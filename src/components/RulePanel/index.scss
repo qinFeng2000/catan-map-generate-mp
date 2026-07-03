@@ -52,6 +52,12 @@
 .rule-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; min-height: 72rpx; border-bottom: 2rpx solid var(--theme-border); color: var(--theme-text); }
 .rule-step-button { width: 56rpx; min-width: 56rpx; padding: 0; border: 2rpx solid var(--theme-border); border-radius: 12rpx; background: var(--theme-page); color: var(--theme-text); }
 .rule-step-button::after { border: 0; }
+.rule-step-button:not(.rule-step-button--disabled) {
+  background: var(--theme-page);
+  color: var(--theme-text);
+  border: 2rpx solid var(--theme-border);
+  opacity: 1;
+}
 .rule-step-button--disabled {
   background: var(--theme-page);
   color: var(--theme-text);

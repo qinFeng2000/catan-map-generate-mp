@@ -57,6 +57,27 @@
 .action--primary { border: 2rpx solid var(--theme-primary); background: var(--theme-primary); color: var(--theme-on-primary); }
 .action--secondary { border: 2rpx solid var(--theme-primary); color: var(--theme-text); background: transparent; }
 
+.settings-button:not(.settings-button--disabled) {
+  background: var(--theme-text);
+  color: var(--theme-on-primary);
+  border: 2rpx solid var(--theme-text);
+  opacity: 1;
+}
+
+.action--primary:not(.action--disabled) {
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+  border: 2rpx solid var(--theme-primary);
+  opacity: 1;
+}
+
+.action--secondary:not(.action--disabled) {
+  background: transparent;
+  color: var(--theme-text);
+  border: 2rpx solid var(--theme-primary);
+  opacity: 1;
+}
+
 .settings-button--disabled {
   background: var(--theme-text);
   color: var(--theme-on-primary);

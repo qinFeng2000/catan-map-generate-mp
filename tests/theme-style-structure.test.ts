@@ -90,16 +90,27 @@ describe('Stone Blue component styles', () => {
       ['action--primary', '--theme-primary', '--theme-on-primary', '--theme-primary'],
       ['action--secondary', 'transparent', '--theme-text', '--theme-primary'],
     ] as const) {
+      const disabledModifier =
+        selector === 'settings-button'
+          ? 'settings-button--disabled'
+          : 'action--disabled'
+      const enabledDeclarations = [
+        background === 'transparent'
+          ? 'background: transparent;'
+          : `background: var(${background});`,
+        `color: var(${color});`,
+        `border: 2rpx solid var(${border});`,
+      ]
+
       expectStateRule(
         pageStyles,
-        String.raw`\.${selector}:not\(\.${selector === 'settings-button' ? 'settings-button--disabled' : 'action--disabled'}\):active\s*,\s*\.${selector}:not\(\.${selector === 'settings-button' ? 'settings-button--disabled' : 'action--disabled'}\)\.button-hover`,
-        [
-          background === 'transparent'
-            ? 'background: transparent;'
-            : `background: var(${background});`,
-          `color: var(${color});`,
-          `border: 2rpx solid var(${border});`,
-        ],
+        String.raw`\.${selector}:not\(\.${disabledModifier}\)`,
+        [...enabledDeclarations, 'opacity: 1;'],
+      )
+      expectStateRule(
+        pageStyles,
+        String.raw`\.${selector}:not\(\.${disabledModifier}\):active\s*,\s*\.${selector}:not\(\.${disabledModifier}\)\.button-hover`,
+        enabledDeclarations,
       )
     }
 
@@ -142,6 +153,11 @@ describe('Stone Blue component styles', () => {
       rulePanelStyles,
       String.raw`\.rule-step-button--disabled`,
       [...declarations, 'opacity: .48;'],
+    )
+    expectStateRule(
+      rulePanelStyles,
+      String.raw`\.rule-step-button:not\(\.rule-step-button--disabled\)`,
+      [...declarations, 'opacity: 1;'],
     )
     expectStateRule(
       rulePanelStyles,
