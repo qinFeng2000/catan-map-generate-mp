@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import type { BoardMetrics, BoardVersion, GeneratedBoard } from '@/domain/board'
 import { BOARD_PRESETS } from '@/presets/board-presets'
-import { createBoardScene, getPageCanvasSize, getShareCanvasSize } from '@/renderer/board-scene'
+import { createBoardScene, getPageCanvasSize, getShareCanvasSize, RESOURCE_COLORS } from '@/renderer/board-scene'
 import { toDisplayCanvasSize } from '@/shared/units'
 import type { DrawCommand } from '@/renderer/commands'
+import { stoneBlue } from '@/theme'
 
 const zeroMetrics: BoardMetrics = {
   sameNumberMinDistance: 0, resourcePipRange: 0, intersectionMaxPips: 0,
@@ -72,10 +73,25 @@ describe('createBoardScene', () => {
     }
   })
 
-  it('uses red text for 6 and 8 but still draws their number text', () => {
-    const commands = createBoardScene(hotNumberFixture, basePreset, { width: 700, height: 700, includeSummary: false })
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '6', color: '#c83a2f' }))
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '8', color: '#c83a2f' }))
+  it('uses the theme high-probability color for 6 and 8', () => {
+    const commands = createBoardScene(hotNumberFixture, basePreset, {
+      width: 700, height: 700, includeSummary: false, theme: stoneBlue,
+    })
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '6', color: stoneBlue.scene.highProbabilityNumber }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '8', color: stoneBlue.scene.highProbabilityNumber }))
+  })
+
+  it('uses the injected theme for scene UI colors without changing resource colors', () => {
+    const { board, preset } = generatedFixture('base')
+    const commands = createBoardScene(board, preset, {
+      ...getShareCanvasSize(preset), includeSummary: true, theme: stoneBlue,
+    })
+
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'clear', color: stoneBlue.scene.canvas }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'circle', tag: 'number-token', fill: stoneBlue.scene.numberToken }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-title', color: stoneBlue.scene.title }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'polygon', tag: 'land-hex', fill: RESOURCE_COLORS.wood }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'polygon', tag: 'sea-hex', fill: RESOURCE_COLORS.sea }))
   })
 
   it('fills the canvas with readable tiles and removes white seams', () => {

@@ -13,6 +13,7 @@ import {
   harborOpeningTriangle,
   type Point,
 } from "@/geometry/hex";
+import { activeTheme, type ThemeDefinition } from "@/theme";
 import type { DrawCommand } from "./commands";
 
 export interface SceneOptions {
@@ -22,6 +23,7 @@ export interface SceneOptions {
   includeLegend?: boolean;
   title?: string;
   ruleLines?: readonly string[];
+  theme?: ThemeDefinition;
 }
 
 export const RESOURCE_COLORS = {
@@ -147,6 +149,7 @@ export const createBoardScene = (
   preset: BoardPreset,
   options: SceneOptions,
 ): DrawCommand[] => {
+  const theme = options.theme ?? activeTheme;
   const { minX, maxX, minY, maxY } = measureBoardBounds(preset);
   const mapWidth = maxX - minX + LABEL_MARGIN * 2;
   const mapHeight = maxY - minY + LABEL_MARGIN * 2;
@@ -173,7 +176,7 @@ export const createBoardScene = (
   const commands: DrawCommand[] = [
     {
       kind: "clear",
-      color: "#f7f4ec",
+      color: theme.scene.canvas,
       width: options.width,
       height: options.height,
     },
@@ -224,8 +227,8 @@ export const createBoardScene = (
       kind: "circle",
       center: at,
       radius: scale * 0.31,
-      fill: "#fff7dd",
-      stroke: "#fff7dd",
+      fill: theme.scene.numberToken,
+      stroke: theme.scene.numberToken,
       lineWidth: 0,
       tag: "number-token",
     });
@@ -233,7 +236,10 @@ export const createBoardScene = (
       kind: "text",
       at,
       text: String(hex.number),
-      color: hex.number === 6 || hex.number === 8 ? "#c83a2f" : "#24313a",
+      color:
+        hex.number === 6 || hex.number === 8
+          ? theme.scene.highProbabilityNumber
+          : theme.scene.numberText,
       fontSize: scale * 0.42,
       weight: "bold",
       align: "center",
@@ -271,7 +277,7 @@ export const createBoardScene = (
         kind: "text",
         at: { x: x + swatchSize + 6, y },
         text: label,
-        color: "#29333a",
+        color: theme.scene.title,
         fontSize,
         weight: "bold",
         align: "left",
@@ -286,7 +292,7 @@ export const createBoardScene = (
       kind: "text",
       at: { x: options.width / 2, y: 66 },
       text: options.title ?? "卡坦岛地图生成器",
-      color: "#29333a",
+      color: theme.scene.title,
       fontSize: 42,
       weight: "bold",
       align: "center",
@@ -296,7 +302,7 @@ export const createBoardScene = (
       kind: "text",
       at: { x: options.width / 2, y: 108 },
       text: board.version === "base" ? "2–4 人版" : "5–6 人扩充版",
-      color: "#73808a",
+      color: theme.scene.mutedText,
       fontSize: 25,
       weight: "normal",
       align: "center",
@@ -307,7 +313,7 @@ export const createBoardScene = (
         kind: "text",
         at: { x: 70, y: options.height - bottom + 54 + index * 28 },
         text: `✓ ${line}`,
-        color: "#52616b",
+        color: theme.scene.summaryText,
         fontSize: 22,
         weight: "normal",
         align: "left",
@@ -319,7 +325,7 @@ export const createBoardScene = (
       kind: "text",
       at: { x: metricX, y: options.height - 140 },
       text: `同组数字最短距离 ${board.metrics.sameNumberMinDistance} 格`,
-      color: "#29333a",
+      color: theme.scene.title,
       fontSize: 23,
       weight: "bold",
       align: "right",
@@ -329,7 +335,7 @@ export const createBoardScene = (
       kind: "text",
       at: { x: metricX, y: options.height - 105 },
       text: `资源概率最大差值 ${board.metrics.resourcePipRange}`,
-      color: "#29333a",
+      color: theme.scene.title,
       fontSize: 23,
       weight: "bold",
       align: "right",
@@ -339,7 +345,7 @@ export const createBoardScene = (
       kind: "text",
       at: { x: metricX, y: options.height - 70 },
       text: `交叉点最高 ${board.metrics.intersectionMaxPips} · 最大差值 ${board.metrics.intersectionPipRange}`,
-      color: "#29333a",
+      color: theme.scene.title,
       fontSize: 23,
       weight: "bold",
       align: "right",
@@ -349,7 +355,7 @@ export const createBoardScene = (
       kind: "text",
       at: { x: options.width - 70, y: options.height - 28 },
       text: "Fisher–Yates 随机排序 · 约束化生成",
-      color: "#8a959c",
+      color: theme.scene.mutedText,
       fontSize: 18,
       weight: "normal",
       align: "right",
