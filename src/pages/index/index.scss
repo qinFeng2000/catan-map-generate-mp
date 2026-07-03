@@ -57,43 +57,43 @@
 .action--primary { border: 2rpx solid var(--theme-primary); background: var(--theme-primary); color: var(--theme-on-primary); }
 .action--secondary { border: 2rpx solid var(--theme-primary); color: var(--theme-text); background: transparent; }
 
-.settings-button[disabled] {
+.settings-button--disabled {
   background: var(--theme-text);
   color: var(--theme-on-primary);
   border: 2rpx solid var(--theme-text);
   opacity: .48;
 }
 
-.settings-button:not([disabled]):active,
-.settings-button:not([disabled]).button-hover {
+.settings-button:not(.settings-button--disabled):active,
+.settings-button:not(.settings-button--disabled).button-hover {
   background: var(--theme-text);
   color: var(--theme-on-primary);
   border: 2rpx solid var(--theme-text);
 }
 
-.action--primary[disabled] {
+.action--primary.action--disabled {
   background: var(--theme-primary);
   color: var(--theme-on-primary);
   border: 2rpx solid var(--theme-primary);
   opacity: .48;
 }
 
-.action--primary:not([disabled]):active,
-.action--primary:not([disabled]).button-hover {
+.action--primary:not(.action--disabled):active,
+.action--primary:not(.action--disabled).button-hover {
   background: var(--theme-primary);
   color: var(--theme-on-primary);
   border: 2rpx solid var(--theme-primary);
 }
 
-.action--secondary[disabled] {
+.action--secondary.action--disabled {
   background: transparent;
   color: var(--theme-text);
   border: 2rpx solid var(--theme-primary);
   opacity: .48;
 }
 
-.action--secondary:not([disabled]):active,
-.action--secondary:not([disabled]).button-hover {
+.action--secondary:not(.action--disabled):active,
+.action--secondary:not(.action--disabled).button-hover {
   background: transparent;
   color: var(--theme-text);
   border: 2rpx solid var(--theme-primary);

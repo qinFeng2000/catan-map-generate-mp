@@ -160,7 +160,11 @@ export default function IndexPage() {
           </View>
         </Picker>
         <Button
-          className="settings-button"
+          className={
+            busy
+              ? "settings-button settings-button--disabled"
+              : "settings-button"
+          }
           disabled={busy}
           onClick={() => setRulesOpen(true)}
         >
@@ -184,14 +188,22 @@ export default function IndexPage() {
       </View>
       <View className="actions">
         <Button
-          className="action action--primary"
+          className={
+            busy
+              ? "action action--primary action--disabled"
+              : "action action--primary"
+          }
           disabled={busy}
           onClick={regenerate}
         >
           重新生成
         </Button>
         <Button
-          className="action action--secondary"
+          className={
+            !visibleBoard || busy
+              ? "action action--secondary action--disabled"
+              : "action action--secondary"
+          }
           disabled={!visibleBoard || busy}
           onClick={handleShare}
         >

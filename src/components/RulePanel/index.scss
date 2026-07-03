@@ -50,16 +50,16 @@
 
 .rule-panel__body { padding: 12rpx 24rpx 36rpx; }
 .rule-row { display: flex; align-items: center; justify-content: space-between; gap: 16rpx; min-height: 72rpx; border-bottom: 2rpx solid var(--theme-border); color: var(--theme-text); }
-.rule-row--limit button { width: 56rpx; min-width: 56rpx; padding: 0; border: 2rpx solid var(--theme-border); border-radius: 12rpx; background: var(--theme-page); color: var(--theme-text); }
-.rule-row--limit button::after { border: 0; }
-.rule-row--limit button[disabled] {
+.rule-step-button { width: 56rpx; min-width: 56rpx; padding: 0; border: 2rpx solid var(--theme-border); border-radius: 12rpx; background: var(--theme-page); color: var(--theme-text); }
+.rule-step-button::after { border: 0; }
+.rule-step-button--disabled {
   background: var(--theme-page);
   color: var(--theme-text);
   border: 2rpx solid var(--theme-border);
   opacity: .48;
 }
-.rule-row--limit button:not([disabled]):active,
-.rule-row--limit button:not([disabled]).button-hover {
+.rule-step-button:not(.rule-step-button--disabled):active,
+.rule-step-button:not(.rule-step-button--disabled).button-hover {
   background: var(--theme-page);
   color: var(--theme-text);
   border: 2rpx solid var(--theme-border);

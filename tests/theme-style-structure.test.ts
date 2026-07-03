@@ -8,6 +8,7 @@ const readSource = (path: string) =>
 const pageStyles = readSource('src/pages/index/index.scss')
 const pageSource = readSource('src/pages/index/index.tsx')
 const rulePanelStyles = readSource('src/components/RulePanel/index.scss')
+const rulePanelSource = readSource('src/components/RulePanel/index.tsx')
 const metricSummaryStyles = readSource('src/components/MetricSummary/index.scss')
 const componentStyles = [pageStyles, rulePanelStyles, metricSummaryStyles]
 
@@ -55,19 +56,29 @@ describe('Stone Blue component styles', () => {
   })
 
   it('keeps every page button state in the Stone Blue palette', () => {
-    expectStateRule(pageStyles, String.raw`\.settings-button\[disabled\]`, [
+    expect(pageSource).toMatch(
+      /className=\{\s*busy\s*\?\s*["']settings-button settings-button--disabled["']\s*:\s*["']settings-button["']\s*\}\s*disabled=\{busy\}/,
+    )
+    expect(pageSource).toMatch(
+      /className=\{\s*busy\s*\?\s*["']action action--primary action--disabled["']\s*:\s*["']action action--primary["']\s*\}\s*disabled=\{busy\}/,
+    )
+    expect(pageSource).toMatch(
+      /className=\{\s*!visibleBoard \|\| busy\s*\?\s*["']action action--secondary action--disabled["']\s*:\s*["']action action--secondary["']\s*\}\s*disabled=\{!visibleBoard \|\| busy\}/,
+    )
+
+    expectStateRule(pageStyles, String.raw`\.settings-button--disabled`, [
       'background: var(--theme-text);',
       'color: var(--theme-on-primary);',
       'border: 2rpx solid var(--theme-text);',
       'opacity: .48;',
     ])
-    expectStateRule(pageStyles, String.raw`\.action--primary\[disabled\]`, [
+    expectStateRule(pageStyles, String.raw`\.action--primary\.action--disabled`, [
       'background: var(--theme-primary);',
       'color: var(--theme-on-primary);',
       'border: 2rpx solid var(--theme-primary);',
       'opacity: .48;',
     ])
-    expectStateRule(pageStyles, String.raw`\.action--secondary\[disabled\]`, [
+    expectStateRule(pageStyles, String.raw`\.action--secondary\.action--disabled`, [
       'background: transparent;',
       'color: var(--theme-text);',
       'border: 2rpx solid var(--theme-primary);',
@@ -81,7 +92,7 @@ describe('Stone Blue component styles', () => {
     ] as const) {
       expectStateRule(
         pageStyles,
-        String.raw`\.${selector}:not\(\[disabled\]\):active\s*,\s*\.${selector}:not\(\[disabled\]\)\.button-hover`,
+        String.raw`\.${selector}:not\(\.${selector === 'settings-button' ? 'settings-button--disabled' : 'action--disabled'}\):active\s*,\s*\.${selector}:not\(\.${selector === 'settings-button' ? 'settings-button--disabled' : 'action--disabled'}\)\.button-hover`,
         [
           background === 'transparent'
             ? 'background: transparent;'
@@ -91,6 +102,8 @@ describe('Stone Blue component styles', () => {
         ],
       )
     }
+
+    expect(pageStyles).not.toMatch(/\[disabled\]/)
   })
 
   it('uses theme variables for the rule panel surfaces and overlay', () => {
@@ -112,7 +125,7 @@ describe('Stone Blue component styles', () => {
       /\.rule-panel\s*\{[^}]*\bborder-radius:\s*28rpx 28rpx 0 0;/s,
     )
     expect(rulePanelStyles).toMatch(
-      /\.rule-row--limit button\s*\{[^}]*\bborder-radius:\s*12rpx;/s,
+      /\.rule-step-button\s*\{[^}]*\bborder-radius:\s*12rpx;/s,
     )
   })
 
@@ -123,16 +136,19 @@ describe('Stone Blue component styles', () => {
       'border: 2rpx solid var(--theme-border);',
     ]
 
+    expect(rulePanelSource.match(/className=\{\s*disabled\s*\?\s*["']rule-step-button rule-step-button--disabled["']\s*:\s*["']rule-step-button["']\s*\}/g)).toHaveLength(2)
+
     expectStateRule(
       rulePanelStyles,
-      String.raw`\.rule-row--limit button\[disabled\]`,
+      String.raw`\.rule-step-button--disabled`,
       [...declarations, 'opacity: .48;'],
     )
     expectStateRule(
       rulePanelStyles,
-      String.raw`\.rule-row--limit button:not\(\[disabled\]\):active\s*,\s*\.rule-row--limit button:not\(\[disabled\]\)\.button-hover`,
+      String.raw`\.rule-step-button:not\(\.rule-step-button--disabled\):active\s*,\s*\.rule-step-button:not\(\.rule-step-button--disabled\)\.button-hover`,
       declarations,
     )
+    expect(rulePanelStyles).not.toMatch(/\[disabled\]/)
   })
 
   it('uses a bordered theme surface for the metric summary', () => {

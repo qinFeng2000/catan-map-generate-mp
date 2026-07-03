@@ -72,6 +72,11 @@ export function RulePanel({
             />
             <Text>交叉路口最大相同资源</Text>
             <Button
+              className={
+                disabled
+                  ? "rule-step-button rule-step-button--disabled"
+                  : "rule-step-button"
+              }
               disabled={disabled}
               onClick={() => onChange(decrementIntersectionLimit(rules))}
             >
@@ -79,6 +84,11 @@ export function RulePanel({
             </Button>
             <Text>{rules.maxSameResourcePerIntersection}</Text>
             <Button
+              className={
+                disabled
+                  ? "rule-step-button rule-step-button--disabled"
+                  : "rule-step-button"
+              }
               disabled={disabled}
               onClick={() => onChange(incrementIntersectionLimit(rules))}
             >
