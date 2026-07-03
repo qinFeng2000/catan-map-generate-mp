@@ -4,7 +4,7 @@ import { BOARD_PRESETS } from '@/presets/board-presets'
 import { createBoardScene, getPageCanvasSize, getShareCanvasSize, RESOURCE_COLORS } from '@/renderer/board-scene'
 import { toDisplayCanvasSize } from '@/shared/units'
 import type { DrawCommand } from '@/renderer/commands'
-import { stoneBlue } from '@/theme'
+import { activeTheme, stoneBlue, type ThemeDefinition } from '@/theme'
 
 const zeroMetrics: BoardMetrics = {
   sameNumberMinDistance: 0, resourcePipRange: 0, intersectionMaxPips: 0,
@@ -23,6 +23,20 @@ const generatedFixture = (version: BoardVersion) => {
   return { board, preset }
 }
 const basePreset = BOARD_PRESETS.base
+const sentinelTheme: ThemeDefinition = {
+  ...stoneBlue,
+  id: 'sentinel',
+  name: 'Sentinel',
+  scene: {
+    canvas: '#010203',
+    numberToken: '#111213',
+    numberText: '#212223',
+    highProbabilityNumber: '#313233',
+    title: '#414243',
+    mutedText: '#515253',
+    summaryText: '#616263',
+  },
+}
 const hotNumberFixture: GeneratedBoard = (() => {
   const { board } = generatedFixture('base')
   const productive = board.hexes.filter((hex) => hex.resource !== 'desert').map((hex) => ({ ...hex }))
@@ -75,23 +89,68 @@ describe('createBoardScene', () => {
 
   it('uses the theme high-probability color for 6 and 8', () => {
     const commands = createBoardScene(hotNumberFixture, basePreset, {
-      width: 700, height: 700, includeSummary: false, theme: stoneBlue,
+      width: 700, height: 700, includeSummary: false, theme: sentinelTheme,
     })
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '6', color: stoneBlue.scene.highProbabilityNumber }))
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '8', color: stoneBlue.scene.highProbabilityNumber }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '6', color: sentinelTheme.scene.highProbabilityNumber }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', text: '8', color: sentinelTheme.scene.highProbabilityNumber }))
   })
 
-  it('uses the injected theme for scene UI colors without changing resource colors', () => {
+  it('uses every injected scene color for board and share UI', () => {
     const { board, preset } = generatedFixture('base')
     const commands = createBoardScene(board, preset, {
-      ...getShareCanvasSize(preset), includeSummary: true, theme: stoneBlue,
+      ...getShareCanvasSize(preset),
+      includeSummary: true,
+      ruleLines: ['哨兵规则'],
+      theme: sentinelTheme,
+    })
+    const textCommands = commands.filter((command): command is Extract<DrawCommand, { kind: 'text' }> => command.kind === 'text')
+    const regularNumberTexts = textCommands.filter((command) => command.tag === 'number-text' && command.text !== '6' && command.text !== '8')
+    const legendLabels = textCommands.filter((command) => command.tag === 'resource-legend-label')
+    const metrics = textCommands.filter((command) => command.tag === 'share-metric')
+
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'clear', color: sentinelTheme.scene.canvas }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'circle', tag: 'number-token', fill: sentinelTheme.scene.numberToken, stroke: sentinelTheme.scene.numberToken }))
+    expect(regularNumberTexts.length).toBeGreaterThan(0)
+    expect(regularNumberTexts.every((command) => command.color === sentinelTheme.scene.numberText)).toBe(true)
+    expect(legendLabels).toHaveLength(6)
+    expect(legendLabels.every((command) => command.color === sentinelTheme.scene.title)).toBe(true)
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-title', color: sentinelTheme.scene.title }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-version', color: sentinelTheme.scene.mutedText }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-rule', color: sentinelTheme.scene.summaryText }))
+    expect(metrics).toHaveLength(3)
+    expect(metrics.every((command) => command.color === sentinelTheme.scene.title)).toBe(true)
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-algorithm', color: sentinelTheme.scene.mutedText }))
+  })
+
+  it('uses the active theme when no scene theme is provided', () => {
+    const { board, preset } = generatedFixture('base')
+    const commands = createBoardScene(board, preset, {
+      width: 700, height: 700, includeSummary: false,
     })
 
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'clear', color: stoneBlue.scene.canvas }))
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'circle', tag: 'number-token', fill: stoneBlue.scene.numberToken }))
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-title', color: stoneBlue.scene.title }))
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'polygon', tag: 'land-hex', fill: RESOURCE_COLORS.wood }))
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'polygon', tag: 'sea-hex', fill: RESOURCE_COLORS.sea }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'clear', color: activeTheme.scene.canvas }))
+  })
+
+  it('keeps all board and legend resource colors outside the injected theme', () => {
+    const { board, preset } = generatedFixture('base')
+    const commands = createBoardScene(board, preset, {
+      ...getShareCanvasSize(preset), includeSummary: true, theme: sentinelTheme,
+    })
+    const landFills = new Set(commands.filter((command): command is Extract<DrawCommand, { kind: 'polygon' }> => command.kind === 'polygon' && command.tag === 'land-hex').map((command) => command.fill))
+    const seaFills = new Set(commands.filter((command): command is Extract<DrawCommand, { kind: 'polygon' }> => command.kind === 'polygon' && command.tag === 'sea-hex').map((command) => command.fill))
+    const legendFills = new Set(commands.filter((command): command is Extract<DrawCommand, { kind: 'polygon' }> => command.kind === 'polygon' && command.tag === 'resource-legend-swatch').map((command) => command.fill))
+    const landResourceColors = new Set([
+      RESOURCE_COLORS.wood,
+      RESOURCE_COLORS.wool,
+      RESOURCE_COLORS.grain,
+      RESOURCE_COLORS.brick,
+      RESOURCE_COLORS.ore,
+      RESOURCE_COLORS.desert,
+    ])
+
+    expect(landFills).toEqual(landResourceColors)
+    expect(seaFills).toEqual(new Set([RESOURCE_COLORS.sea]))
+    expect(legendFills).toEqual(landResourceColors)
   })
 
   it('fills the canvas with readable tiles and removes white seams', () => {
