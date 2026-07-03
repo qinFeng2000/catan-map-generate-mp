@@ -2,6 +2,9 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
+const GUARDED_OFFSCREEN_CANVAS_PATTERN =
+  /\{visibleBoard\s*&&\s*!rulesOpen\s*&&\s*\(\s*<BoardCanvas\b(?:(?!\/>)[\s\S])*?\boffscreen\b(?:(?!\/>)[\s\S])*?\/>/
+
 describe('index page canvas structure', () => {
   it('does not expose unfinished game mode tabs', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
@@ -24,9 +27,18 @@ describe('index page canvas structure', () => {
   it('keeps canvas nodes out of the tree while the rule panel is open', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
 
-    expect(source).toMatch(
-      /\{visibleBoard\s*&&\s*!rulesOpen\s*&&\s*\(\s*<BoardCanvas\b[\s\S]*?\boffscreen\b/,
-    )
+    expect(source).toMatch(GUARDED_OFFSCREEN_CANVAS_PATTERN)
+  })
+
+  it('requires offscreen on the guarded BoardCanvas tag itself', () => {
+    const source = `
+      {visibleBoard && !rulesOpen && (
+        <BoardCanvas canvasId="share-canvas" />
+      )}
+      <View offscreen />
+    `
+
+    expect(source).not.toMatch(GUARDED_OFFSCREEN_CANVAS_PATTERN)
   })
 
   it('routes every page generation through the native loading task', () => {
