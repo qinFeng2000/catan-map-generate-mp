@@ -24,8 +24,9 @@ describe('index page canvas structure', () => {
   it('keeps canvas nodes out of the tree while the rule panel is open', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
 
-    expect(source).toContain('visibleBoard && !rulesOpen')
-    expect(source.match(/visibleBoard && !rulesOpen/g)).toHaveLength(2)
+    expect(source).toMatch(
+      /\{visibleBoard\s*&&\s*!rulesOpen\s*&&\s*\(\s*<BoardCanvas\b[\s\S]*?\boffscreen\b/,
+    )
   })
 
   it('routes every page generation through the native loading task', () => {
@@ -39,13 +40,15 @@ describe('index page canvas structure', () => {
     const pageSource = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
     const styleSource = readFileSync(resolve(process.cwd(), 'src/pages/index/index.scss'), 'utf8')
 
-    expect(pageSource).toContain("import { BoardDom } from '@/components/BoardDom'")
+    expect(pageSource).toMatch(
+      /import\s+\{\s*BoardDom\s*\}\s+from\s+["']@\/components\/BoardDom["']/,
+    )
     expect(pageSource).toContain('key={`${visibleBoard.version}-${visibleBoard.seed}-${visibleBoard.createdAt}`}')
-    expect(pageSource).toContain("canvasId='share-canvas'")
+    expect(pageSource).toMatch(/canvasId\s*=\s*["']share-canvas["']/)
     expect(pageSource).toContain('offscreen')
     expect(pageSource.match(/<BoardCanvas/g)).toHaveLength(1)
-    expect(pageSource).not.toContain("canvasId='board-canvas'")
-    expect(pageSource).not.toContain("className='map-loading'")
+    expect(pageSource).not.toMatch(/canvasId\s*=\s*["']board-canvas["']/)
+    expect(pageSource).not.toMatch(/className\s*=\s*["']map-loading["']/)
     expect(styleSource).not.toContain('.map-loading')
   })
 })
