@@ -3,7 +3,7 @@ import type { ThemeDefinition } from './types'
 
 export const themeRegistry = {
   stoneBlue,
-} satisfies Record<string, ThemeDefinition>
+} as const satisfies Record<string, ThemeDefinition>
 
 export type ThemeId = keyof typeof themeRegistry
 
