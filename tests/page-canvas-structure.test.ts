@@ -1,48 +1,47 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 
 const GUARDED_OFFSCREEN_CANVAS_PATTERN =
   /\{visibleBoard\s*&&\s*!rulesOpen\s*&&\s*\(\s*<BoardCanvas\b(?:(?!\/>)[\s\S])*?\boffscreen\b(?:(?!\/>)[\s\S])*?\/>/
 
-function extractFunctionCalls(source: string, functionName: string): string[] {
-  const calls: string[] = []
-  const callPattern = new RegExp(`\\b${functionName}\\s*\\(`, 'g')
+function findCreateBoardSceneCalls(source: string): ts.CallExpression[] {
+  const sourceFile = ts.createSourceFile(
+    'index.tsx',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  )
+  const calls: ts.CallExpression[] = []
 
-  for (const match of source.matchAll(callPattern)) {
-    const start = match.index
-    let depth = 0
-    let quote: "'" | '"' | '`' | null = null
-    let escaped = false
-
-    for (let index = source.indexOf('(', start); index < source.length; index += 1) {
-      const character = source[index]
-
-      if (quote) {
-        if (escaped) escaped = false
-        else if (character === '\\') escaped = true
-        else if (character === quote) quote = null
-        continue
-      }
-
-      if (character === "'" || character === '"' || character === '`') {
-        quote = character
-      } else if (character === '(') {
-        depth += 1
-      } else if (character === ')') {
-        depth -= 1
-        if (depth === 0) {
-          calls.push(source.slice(start, index + 1))
-          break
-        }
-      }
+  const visit = (node: ts.Node): void => {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'createBoardScene'
+    ) {
+      calls.push(node)
     }
+    ts.forEachChild(node, visit)
   }
 
+  visit(sourceFile)
   return calls
 }
 
 describe('index page canvas structure', () => {
+  it('ignores createBoardScene text inside comments and strings', () => {
+    const source = `
+      // createBoardScene(commentBoard, commentPreset, { theme: activeTheme })
+      const example = "createBoardScene(stringBoard, stringPreset, { theme: activeTheme })"
+      createBoardScene(board, preset, { theme: activeTheme })
+    `
+
+    expect(findCreateBoardSceneCalls(source)).toHaveLength(1)
+  })
+
   it('does not expose unfinished game mode tabs', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
 
@@ -103,7 +102,7 @@ describe('index page canvas structure', () => {
 
   it('wires the active theme through the page, board scenes, and rule panel', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/pages/index/index.tsx'), 'utf8')
-    const boardSceneCalls = extractFunctionCalls(source, 'createBoardScene')
+    const boardSceneCalls = findCreateBoardSceneCalls(source)
 
     expect(source).toMatch(
       /import\s*\{[^}]*\bactiveTheme\b[^}]*\bthemeCssVariables\b[^}]*\}\s*from\s*["']@\/theme["']|import\s*\{[^}]*\bthemeCssVariables\b[^}]*\bactiveTheme\b[^}]*\}\s*from\s*["']@\/theme["']/,
@@ -113,7 +112,23 @@ describe('index page canvas structure', () => {
     )
     expect(boardSceneCalls).toHaveLength(2)
     for (const call of boardSceneCalls) {
-      expect(call).toMatch(/\btheme\s*:\s*activeTheme\b/)
+      const options = call.arguments[2]
+
+      expect(options && ts.isObjectLiteralExpression(options)).toBe(true)
+      if (!options || !ts.isObjectLiteralExpression(options)) continue
+
+      const themeProperty = options.properties.find(
+        (property): property is ts.PropertyAssignment =>
+          ts.isPropertyAssignment(property) &&
+          ts.isIdentifier(property.name) &&
+          property.name.text === 'theme',
+      )
+      expect(themeProperty).toBeDefined()
+      if (!themeProperty) continue
+
+      expect(ts.isIdentifier(themeProperty.initializer)).toBe(true)
+      if (!ts.isIdentifier(themeProperty.initializer)) continue
+      expect(themeProperty.initializer.text).toBe('activeTheme')
     }
     expect(source).toMatch(/<RulePanel\b(?:(?!\/>)[\s\S])*?\btheme\s*=\s*\{\s*activeTheme\s*\}(?:(?!\/>)[\s\S])*?\/>/)
   })
