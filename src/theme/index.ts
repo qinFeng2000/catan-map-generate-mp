@@ -1,5 +1,5 @@
 export { themeCssVariables } from './css-variables'
-export type { ThemeCssVariables } from './css-variables'
+export type { ThemeCssVariables, ThemeLengthTransform } from './css-variables'
 export {
   ACTIVE_THEME_ID,
   activeTheme,

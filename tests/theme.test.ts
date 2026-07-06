@@ -190,6 +190,23 @@ describe('theme registry', () => {
     })
   })
 
+  it('converts runtime rpx tokens for the target platform', () => {
+    const variables = themeCssVariables(
+      desertYellow,
+      (value) => `${value / 40}rem`,
+    )
+
+    expect(variables['--theme-picker-radius']).toBe('0.6rem')
+    expect(variables['--theme-picker-border']).toBe('0 solid transparent')
+    expect(variables['--theme-picker-shadow']).toBe(
+      '0 0.2rem 0.55rem rgba(41, 51, 58, 0.06)',
+    )
+    expect(variables['--theme-secondary-action-border']).toBe(
+      '0.05rem solid #D98B16',
+    )
+    expect(JSON.stringify(variables)).not.toContain('rpx')
+  })
+
   it('keeps the legacy resource palette separate from themes', () => {
     expect(RESOURCE_COLORS).toEqual({
       wood: '#3f8f4b',
