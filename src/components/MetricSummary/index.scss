@@ -3,8 +3,8 @@
   gap: 10rpx;
   margin-top: 20rpx;
   padding: 20rpx 24rpx;
-  border: 2rpx solid var(--theme-border);
-  border-radius: 18rpx;
+  border: var(--theme-summary-border);
+  border-radius: var(--theme-summary-radius);
   background: var(--theme-surface);
-  color: var(--theme-text);
+  color: var(--theme-summary-text);
 }

@@ -17,9 +17,10 @@
 .player-picker {
   min-height: 76rpx;
   padding: 0 24rpx;
-  border: 2rpx solid var(--theme-border);
-  border-radius: 18rpx;
+  border: var(--theme-picker-border);
+  border-radius: var(--theme-picker-radius);
   background: var(--theme-surface);
+  box-shadow: var(--theme-picker-shadow);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,8 +35,8 @@
   min-width: 168rpx;
   min-height: 76rpx;
   padding: 0 24rpx;
-  border: 2rpx solid var(--theme-text);
-  border-radius: 18rpx;
+  border: var(--theme-settings-border);
+  border-radius: var(--theme-settings-radius);
   background: var(--theme-text);
   color: var(--theme-on-primary);
   font-weight: 800;
@@ -47,41 +48,42 @@
 .map-card {
   position: relative;
   overflow: hidden;
-  border: 2rpx solid var(--theme-border);
-  border-radius: 22rpx;
+  border: var(--theme-map-border);
+  border-radius: var(--theme-map-radius);
   background: var(--theme-surface);
+  box-shadow: var(--theme-map-shadow);
 }
 
 .actions { display: flex; gap: 16rpx; margin: 24rpx 0; }
-.action { border-radius: 16rpx; font-weight: 700; flex: 1; }
-.action--primary { border: 2rpx solid var(--theme-primary); background: var(--theme-primary); color: var(--theme-on-primary); }
-.action--secondary { border: 2rpx solid var(--theme-primary); color: var(--theme-text); background: transparent; }
+.action { border-radius: var(--theme-action-radius); font-weight: 700; flex: 1; }
+.action--primary { border: var(--theme-primary-action-border); background: var(--theme-primary); color: var(--theme-on-primary); }
+.action--secondary { border: var(--theme-secondary-action-border); color: var(--theme-secondary-action-text); background: transparent; }
 
 .settings-button:not(.settings-button--disabled) {
   background: var(--theme-text);
   color: var(--theme-on-primary);
-  border: 2rpx solid var(--theme-text);
+  border: var(--theme-settings-border);
   opacity: 1;
 }
 
 .action--primary:not(.action--disabled) {
   background: var(--theme-primary);
   color: var(--theme-on-primary);
-  border: 2rpx solid var(--theme-primary);
+  border: var(--theme-primary-action-border);
   opacity: 1;
 }
 
 .action--secondary:not(.action--disabled) {
   background: transparent;
-  color: var(--theme-text);
-  border: 2rpx solid var(--theme-primary);
+  color: var(--theme-secondary-action-text);
+  border: var(--theme-secondary-action-border);
   opacity: 1;
 }
 
 .settings-button--disabled {
   background: var(--theme-text);
   color: var(--theme-on-primary);
-  border: 2rpx solid var(--theme-text);
+  border: var(--theme-settings-border);
   opacity: .48;
 }
 
@@ -89,13 +91,13 @@
 .settings-button:not(.settings-button--disabled).button-hover {
   background: var(--theme-text);
   color: var(--theme-on-primary);
-  border: 2rpx solid var(--theme-text);
+  border: var(--theme-settings-border);
 }
 
 .action--primary.action--disabled {
   background: var(--theme-primary);
   color: var(--theme-on-primary);
-  border: 2rpx solid var(--theme-primary);
+  border: var(--theme-primary-action-border);
   opacity: .48;
 }
 
@@ -103,23 +105,23 @@
 .action--primary:not(.action--disabled).button-hover {
   background: var(--theme-primary);
   color: var(--theme-on-primary);
-  border: 2rpx solid var(--theme-primary);
+  border: var(--theme-primary-action-border);
 }
 
 .action--secondary.action--disabled {
   background: transparent;
-  color: var(--theme-text);
-  border: 2rpx solid var(--theme-primary);
+  color: var(--theme-secondary-action-text);
+  border: var(--theme-secondary-action-border);
   opacity: .48;
 }
 
 .action--secondary:not(.action--disabled):active,
 .action--secondary:not(.action--disabled).button-hover {
   background: transparent;
-  color: var(--theme-text);
-  border: 2rpx solid var(--theme-primary);
+  color: var(--theme-secondary-action-text);
+  border: var(--theme-secondary-action-border);
 }
 
 .dirty-note { display: block; margin-bottom: 12rpx; color: var(--theme-primary); }
-.error-card { display: grid; gap: 8rpx; margin-bottom: 16rpx; padding: 16rpx 20rpx; border: 2rpx solid var(--theme-border); border-radius: 16rpx; background: var(--theme-danger-surface); color: var(--theme-danger-text); }
+.error-card { display: grid; gap: 8rpx; margin-bottom: 16rpx; padding: 16rpx 20rpx; border: var(--theme-error-border); border-radius: 16rpx; background: var(--theme-danger-surface); color: var(--theme-danger-text); }
 .algorithm-note { display: block; margin-top: 24rpx; color: var(--theme-muted); font-size: 24rpx; text-align: center; }
