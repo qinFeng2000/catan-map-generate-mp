@@ -18,4 +18,14 @@ describe('app theme structure', () => {
     expect(source).toMatch(/\bbackgroundColor\s*:\s*activeTheme\.ui\.page\b/)
     expect(source).not.toContain('#f5f1e8')
   })
+
+  it('keeps the app-config theme import free of Taro runtime dependencies', () => {
+    const source = readFileSync(
+      resolve(process.cwd(), 'src/theme/css-variables.ts'),
+      'utf8',
+    )
+
+    expect(source).not.toMatch(/from\s*['"]@\/shared\/units['"]/)
+    expect(source).not.toMatch(/from\s*['"]@tarojs\/taro['"]/)
+  })
 })

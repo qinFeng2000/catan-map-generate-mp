@@ -108,7 +108,7 @@ describe('index page canvas structure', () => {
       /import\s*\{[^}]*\bactiveTheme\b[^}]*\bthemeCssVariables\b[^}]*\}\s*from\s*["']@\/theme["']|import\s*\{[^}]*\bthemeCssVariables\b[^}]*\bactiveTheme\b[^}]*\}\s*from\s*["']@\/theme["']/,
     )
     expect(source).toMatch(
-      /<View\b(?=[^>]*\bclassName\s*=\s*["']page["'])(?=[^>]*\bstyle\s*=\s*\{\s*themeCssVariables\(\s*activeTheme\s*\)\s*\})[^>]*>/,
+      /<View\b(?=[^>]*\bclassName\s*=\s*["']page["'])(?=[^>]*\bstyle\s*=\s*\{\s*themeCssVariables\(\s*activeTheme\s*,\s*rpx\s*\)\s*\})[^>]*>/,
     )
     expect(boardSceneCalls).toHaveLength(2)
     for (const call of boardSceneCalls) {

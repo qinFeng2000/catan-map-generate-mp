@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react'
-import { rpx } from '@/shared/units'
 import type { ThemeDefinition } from './types'
 
 type ThemeCssVariableName =
@@ -45,6 +44,8 @@ export type ThemeCssVariables = CSSProperties & Record<ThemeCssVariableName, str
 
 export type ThemeLengthTransform = (designPx: number) => string
 
+const preserveRpx: ThemeLengthTransform = (designPx) => `${designPx}rpx`
+
 const resolveThemeValue = (
   value: string,
   transformLength: ThemeLengthTransform,
@@ -55,7 +56,7 @@ const resolveThemeValue = (
 
 export const themeCssVariables = (
   theme: ThemeDefinition,
-  transformLength: ThemeLengthTransform = rpx,
+  transformLength: ThemeLengthTransform = preserveRpx,
 ): ThemeCssVariables => ({
   '--theme-page': theme.ui.page,
   '--theme-surface': theme.ui.surface,

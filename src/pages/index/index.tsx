@@ -138,7 +138,7 @@ export default function IndexPage() {
   );
 
   return (
-    <View className="page" style={themeCssVariables(activeTheme)}>
+    <View className="page" style={themeCssVariables(activeTheme, rpx)}>
       <View className="top-controls">
         <Picker
           className={
