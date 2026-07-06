@@ -28,6 +28,7 @@ interface TileAnchor {
 const TILE_TAGS = new Set(['sea-hex', 'land-hex'])
 const DETAIL_TAGS = new Set(['harbor-opening', 'number-token', 'number-text'])
 const MAX_REVEAL_DELAY_MS = 420
+const TILE_OVERLAP_RENDER_PX = 1
 
 const rounded = (value: number): number => Math.round(value * 10000) / 10000
 const percent = (value: number, total: number): string => `${rounded((value / total) * 100)}%`
@@ -48,6 +49,17 @@ const polygonCenter = (points: readonly Point[]): Point => {
 }
 
 const distance = (a: Point, b: Point): number => Math.hypot(a.x - b.x, a.y - b.y)
+
+const expandPolygon = (points: readonly Point[], amount: number): Point[] => {
+  const center = polygonCenter(points)
+  const radius = Math.max(0, ...points.map((point) => distance(point, center)))
+  if (radius === 0) return [...points]
+  const scale = (radius + amount) / radius
+  return points.map((point) => ({
+    x: center.x + (point.x - center.x) * scale,
+    y: center.y + (point.y - center.y) * scale,
+  }))
+}
 
 const createTileAnchors = (commands: readonly DrawCommand[]): TileAnchor[] => {
   const centers = commands
@@ -74,7 +86,10 @@ const nearestTileDelay = (point: Point, anchors: readonly TileAnchor[]): number 
 }
 
 const polygonStyle = (command: Extract<DrawCommand, { kind: 'polygon' }>, width: number, height: number) => {
-  const bounds = polygonBounds(command.points)
+  const points = TILE_TAGS.has(command.tag ?? '')
+    ? expandPolygon(command.points, TILE_OVERLAP_RENDER_PX)
+    : command.points
+  const bounds = polygonBounds(points)
   const localPoint = (point: Point): string => {
     const x = bounds.width === 0 ? 0 : ((point.x - bounds.left) / bounds.width) * 100
     const y = bounds.height === 0 ? 0 : ((point.y - bounds.top) / bounds.height) * 100
@@ -86,7 +101,7 @@ const polygonStyle = (command: Extract<DrawCommand, { kind: 'polygon' }>, width:
     width: percent(bounds.width, width),
     height: percent(bounds.height, height),
     backgroundColor: command.fill,
-    clipPath: `polygon(${command.points.map(localPoint).join(', ')})`,
+    clipPath: `polygon(${points.map(localPoint).join(', ')})`,
   }
 }
 

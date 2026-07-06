@@ -1,0 +1,72 @@
+<style>
+  .style-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+  .style-card { cursor:pointer; border:2px solid transparent; border-radius:18px; padding:12px; transition:.18s ease; }
+  .style-card:hover { transform:translateY(-2px); }
+  .style-card.selected { border-color:#647d8c; }
+  .phone { width:100%; max-width:280px; margin:auto; border-radius:24px; padding:16px; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; }
+  .phone.a { --bg:#e8edf0; --surface:#f4f6f5; --primary:#6f8795; --deep:#4e6572; --line:#cbd5da; }
+  .phone.b { --bg:#dde5ea; --surface:#eef2f3; --primary:#647d8c; --deep:#3e5664; --line:#b9c8cf; }
+  .phone.c { --bg:#e6e8ee; --surface:#f3f3f6; --primary:#747d9a; --deep:#505a76; --line:#c8ccd8; }
+  .screen { background:var(--bg); border-radius:18px; padding:13px; min-height:410px; color:var(--deep); }
+  .top { display:grid; grid-template-columns:1fr auto; gap:8px; margin-bottom:10px; }
+  .select,.settings,.button,.metrics { border:1px solid var(--line); border-radius:10px; background:var(--surface); }
+  .select { display:flex; justify-content:space-between; padding:10px 12px; font-size:11px; }
+  .settings { padding:9px 11px; background:var(--deep); color:#f8faf9; font-size:11px; }
+  .board { position:relative; height:238px; border:1px solid var(--line); background:var(--surface); border-radius:13px; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .hexmap { width:170px; height:164px; position:relative; filter:saturate(.86); }
+  .hex { position:absolute; width:46px; height:52px; clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .sea{background:#69a9d2}.wood{background:#3f8f4b}.wool{background:#8fd694}.grain{background:#f0c84b}.brick{background:#c8793d}.ore{background:#7d8996}.desert{background:#ead8a8}
+  .x1{left:12px}.x2{left:49px}.x3{left:86px}.x4{left:123px}.y1{top:2px}.y2{top:39px}.y3{top:76px}.y4{top:113px}
+  .actions { display:flex; gap:8px; margin:11px 0; }
+  .button { flex:1; padding:10px; text-align:center; font-size:11px; font-weight:700; }
+  .primary { color:#fff; background:var(--primary); border-color:var(--primary); }
+  .secondary { color:var(--deep); background:transparent; }
+  .metrics { padding:9px 11px; font-size:9px; line-height:1.7; color:var(--deep); }
+  .swatches { display:flex; gap:6px; margin-top:12px; }
+  .swatches i { width:23px; height:23px; border-radius:6px; border:1px solid rgba(0,0,0,.06); }
+  .caption { padding:14px 4px 4px; }
+  .caption h3 { margin:0 0 5px; }
+  .caption p { margin:0; font-size:13px; line-height:1.45; }
+  @media(max-width:900px){.style-grid{grid-template-columns:1fr}.phone{max-width:320px}}
+</style>
+
+<h2>选择蓝色莫兰迪基调</h2>
+<p class="subtitle">三套方案都保留地图现有资源色块，仅改变页面外壳、地图承载面、控件、文字与分享图背景。</p>
+
+<div class="style-grid">
+  <div class="style-card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="phone a"><div class="screen">
+      <div class="top"><div class="select"><span>人数</span><b>2–4 人</b></div><div class="settings">规则</div></div>
+      <div class="board"><div class="hexmap">
+        <i class="hex sea x2 y1"></i><i class="hex sea x3 y1"></i><i class="hex sea x1 y2"></i><i class="hex wood x2 y2"></i><i class="hex wool x3 y2"></i><i class="hex sea x4 y2"></i><i class="hex sea x1 y3"></i><i class="hex grain x2 y3"></i><i class="hex brick x3 y3"></i><i class="hex sea x4 y3"></i><i class="hex sea x2 y4"></i><i class="hex sea x3 y4"></i>
+      </div></div>
+      <div class="actions"><div class="button primary">重新生成</div><div class="button secondary">分享图片</div></div>
+      <div class="metrics">同组数字最短距离 3 格<br>资源概率最大差值 2</div>
+    </div><div class="swatches"><i style="background:#e8edf0"></i><i style="background:#f4f6f5"></i><i style="background:#6f8795"></i><i style="background:#4e6572"></i></div></div>
+    <div class="caption"><h3>A · 轻雾蓝</h3><p>最轻柔、留白最多，地图色块最突出；整体更安静。</p></div>
+  </div>
+
+  <div class="style-card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="phone b"><div class="screen">
+      <div class="top"><div class="select"><span>人数</span><b>2–4 人</b></div><div class="settings">规则</div></div>
+      <div class="board"><div class="hexmap">
+        <i class="hex sea x2 y1"></i><i class="hex sea x3 y1"></i><i class="hex sea x1 y2"></i><i class="hex wood x2 y2"></i><i class="hex wool x3 y2"></i><i class="hex sea x4 y2"></i><i class="hex sea x1 y3"></i><i class="hex grain x2 y3"></i><i class="hex brick x3 y3"></i><i class="hex sea x4 y3"></i><i class="hex sea x2 y4"></i><i class="hex sea x3 y4"></i>
+      </div></div>
+      <div class="actions"><div class="button primary">重新生成</div><div class="button secondary">分享图片</div></div>
+      <div class="metrics">同组数字最短距离 3 格<br>资源概率最大差值 2</div>
+    </div><div class="swatches"><i style="background:#dde5ea"></i><i style="background:#eef2f3"></i><i style="background:#647d8c"></i><i style="background:#3e5664"></i></div></div>
+    <div class="caption"><h3>B · 石板蓝</h3><p>蓝灰感更明确、层级最清晰，兼顾平面感与按钮可识别性。</p></div>
+  </div>
+
+  <div class="style-card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="phone c"><div class="screen">
+      <div class="top"><div class="select"><span>人数</span><b>2–4 人</b></div><div class="settings">规则</div></div>
+      <div class="board"><div class="hexmap">
+        <i class="hex sea x2 y1"></i><i class="hex sea x3 y1"></i><i class="hex sea x1 y2"></i><i class="hex wood x2 y2"></i><i class="hex wool x3 y2"></i><i class="hex sea x4 y2"></i><i class="hex sea x1 y3"></i><i class="hex grain x2 y3"></i><i class="hex brick x3 y3"></i><i class="hex sea x4 y3"></i><i class="hex sea x2 y4"></i><i class="hex sea x3 y4"></i>
+      </div></div>
+      <div class="actions"><div class="button primary">重新生成</div><div class="button secondary">分享图片</div></div>
+      <div class="metrics">同组数字最短距离 3 格<br>资源概率最大差值 2</div>
+    </div><div class="swatches"><i style="background:#e6e8ee"></i><i style="background:#f3f3f6"></i><i style="background:#747d9a"></i><i style="background:#505a76"></i></div></div>
+    <div class="caption"><h3>C · 靛灰蓝</h3><p>更偏冷静与成熟，蓝紫倾向明显，视觉个性更强。</p></div>
+  </div>
+</div>

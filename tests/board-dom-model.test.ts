@@ -55,18 +55,30 @@ describe('createBoardDomScene', () => {
     ])
   })
 
-  it('positions polygons with percentage bounds and a local clip path', () => {
+  it('expands tile polygons by one render pixel while preserving their local clip path', () => {
     const scene = createBoardDomScene(commands, 200, 100, 400)
     const land = scene.layers.find((layer) => layer.tag === 'land-hex')!
 
     expect(land.kind).toBe('polygon')
     expect(land.style).toMatchObject({
-      left: '40%',
-      top: '30%',
-      width: '20%',
-      height: '40%',
+      left: '39.5528%',
+      top: '29.1056%',
+      width: '20.8944%',
+      height: '41.7889%',
       backgroundColor: '#3f8f4b',
       clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+    })
+  })
+
+  it('does not expand non-tile polygons', () => {
+    const scene = createBoardDomScene(commands, 200, 100, 400)
+    const swatch = scene.layers.find((layer) => layer.tag === 'resource-legend-swatch')!
+
+    expect(swatch.style).toMatchObject({
+      left: '5%',
+      top: '5%',
+      width: '5%',
+      height: '10%',
     })
   })
 
