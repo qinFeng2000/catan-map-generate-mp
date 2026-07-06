@@ -65,21 +65,29 @@ interface ThemeAppearance {
   pickerBorder: string
   pickerShadow: string
   settingsRadius: string
+  settingsBorder: string
   mapRadius: string
   mapBorder: string
   mapShadow: string
   actionRadius: string
+  primaryActionBorder: string
+  secondaryActionBorder: string
+  secondaryActionText: string
+  errorBorder: string
   panelRadius: string
   panelBorder: string
+  dividerBorder: string
   closeRadius: string
   closeBorder: string
   closeBackground: string
   closeText: string
+  closeLineHeight: string
   stepRadius: string
   stepBorder: string
   stepBackground: string
   summaryRadius: string
   summaryBorder: string
+  summaryText: string
 }
 ```
 
@@ -102,9 +110,9 @@ export const ACTIVE_THEME_ID: ThemeId = 'desertYellow'
 
 ## 7. 样式接入
 
-- 首页选择器、规则按钮、地图卡片和操作按钮读取外观变量；
+- 首页选择器、规则按钮、地图卡片、操作按钮和错误卡读取外观变量；
 - 规则面板、关闭按钮和步进按钮读取外观变量；
-- 指标摘要读取主题圆角和边框变量；
+- 指标摘要读取主题圆角、边框和文字变量；
 - 按钮启用、禁用、按下状态继续使用显式修饰类，避免 Taro H5 的 `disabled="false"` 属性影响正常颜色；
 - `src/app.scss` 的挂载前回退色改为默认沙漠黄，避免启动时短暂出现石板蓝；
 - 平台导航和背景继续由 `activeTheme.platform` 与 `activeTheme.ui.page` 提供。
