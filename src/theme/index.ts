@@ -6,5 +6,6 @@ export {
   themeRegistry,
 } from './registry'
 export type { ThemeId } from './registry'
+export { desertYellow } from './desert-yellow'
 export { stoneBlue } from './stone-blue'
-export type { ThemeDefinition } from './types'
+export type { ThemeAppearance, ThemeDefinition } from './types'

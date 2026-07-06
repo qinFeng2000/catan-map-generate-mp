@@ -4,7 +4,7 @@ import { BOARD_PRESETS } from '@/presets/board-presets'
 import { createBoardScene, getPageCanvasSize, getShareCanvasSize, RESOURCE_COLORS } from '@/renderer/board-scene'
 import { toDisplayCanvasSize } from '@/shared/units'
 import type { DrawCommand } from '@/renderer/commands'
-import { activeTheme, stoneBlue, type ThemeDefinition } from '@/theme'
+import { activeTheme, desertYellow, stoneBlue, type ThemeDefinition } from '@/theme'
 
 const zeroMetrics: BoardMetrics = {
   sameNumberMinDistance: 0, resourcePipRange: 0, intersectionMaxPips: 0,
@@ -35,6 +35,7 @@ const sentinelTheme: ThemeDefinition = {
     title: '#414243',
     mutedText: '#515253',
     summaryText: '#616263',
+    algorithmText: '#717273',
   },
 }
 const hotNumberFixture: GeneratedBoard = (() => {
@@ -119,7 +120,7 @@ describe('createBoardScene', () => {
     expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-rule', color: sentinelTheme.scene.summaryText }))
     expect(metrics).toHaveLength(3)
     expect(metrics.every((command) => command.color === sentinelTheme.scene.title)).toBe(true)
-    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-algorithm', color: sentinelTheme.scene.mutedText }))
+    expect(commands).toContainEqual(expect.objectContaining({ kind: 'text', tag: 'share-algorithm', color: sentinelTheme.scene.algorithmText }))
   })
 
   it('uses the active theme when no scene theme is provided', () => {
@@ -131,10 +132,10 @@ describe('createBoardScene', () => {
     expect(commands).toContainEqual(expect.objectContaining({ kind: 'clear', color: activeTheme.scene.canvas }))
   })
 
-  it('keeps all board and legend resource colors outside the injected theme', () => {
+  it.each([stoneBlue, desertYellow, sentinelTheme])('keeps all board and legend resource colors outside $name', (theme) => {
     const { board, preset } = generatedFixture('base')
     const commands = createBoardScene(board, preset, {
-      ...getShareCanvasSize(preset), includeSummary: true, theme: sentinelTheme,
+      ...getShareCanvasSize(preset), includeSummary: true, theme,
     })
     const landFills = new Set(commands.filter((command): command is Extract<DrawCommand, { kind: 'polygon' }> => command.kind === 'polygon' && command.tag === 'land-hex').map((command) => command.fill))
     const seaFills = new Set(commands.filter((command): command is Extract<DrawCommand, { kind: 'polygon' }> => command.kind === 'polygon' && command.tag === 'sea-hex').map((command) => command.fill))

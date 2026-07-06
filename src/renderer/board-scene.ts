@@ -355,7 +355,7 @@ export const createBoardScene = (
       kind: "text",
       at: { x: options.width - 70, y: options.height - 28 },
       text: "Fisher–Yates 随机排序 · 约束化生成",
-      color: theme.scene.mutedText,
+      color: theme.scene.algorithmText,
       fontSize: 18,
       weight: "normal",
       align: "right",
